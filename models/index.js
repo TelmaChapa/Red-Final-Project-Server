@@ -10,8 +10,6 @@ Extract.belongsTo(User)
 User.hasMany(Extract)
 
 //IMAGE
-Image.belongsTo(Extract)
-Extract.hasOne(Image)
 Image.belongsTo(User)
 User.hasMany(Image)
 

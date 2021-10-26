@@ -14,6 +14,8 @@ const controllers = require("./controllers");
 app.use(Express.json());
 app.use(middlewares.CORS)
 app.use("/user", controllers.User);
+app.use("/extract", controllers.Extract);
+app.use("/image", controllers.Image);
 
 const resetDatabase = {force:true}
 db.authenticate()
