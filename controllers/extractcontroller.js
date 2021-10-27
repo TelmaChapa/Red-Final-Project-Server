@@ -19,7 +19,8 @@ router.post("/", validateSession, (req, res) => {
         container,
         startdate,
         enddate,
-        overallresult
+        overallresult,
+        userId: req.user.id
     })
         .then(extract => res.status(200).json(extract))
         .catch(err => res.status(500).json(
@@ -30,47 +31,46 @@ router.post("/", validateSession, (req, res) => {
 router.get('/all', validateSession, (req, res) => {
     let userid = req.user.id
     Extract.findAll({
-        where: { user_id: userid }
+        where: { userId: userid }
     })
-        .then(extracts => res.status(200).json(extracts))
-        .catch(err => res.status(500).json(
-            { error: err }))
+        .then((extracts) => res.status(200).json(extracts))
+        .catch(err => res.status(500).json({ error: err }))
 });
 
 //UPDATE EXTRACT BY ID
-router.update("/:id", validateSession, (req, res) {
+router.put("/update/:id", validateSession, (req, res) => {
     const updateExtract = {
-        beantype: req.body.log.
+        beantype: req.body.
             beantype,
-        beanamount: req.body.log.
+        beanamount: req.body.
             beanamount,
-        alcoholtype: req.body.log.
+        alcoholtype: req.body.
             alcoholtype,
-        proof: req.body.log.
+        proof: req.body.
             proof,
-        alcoholamount: req.body.log.
+        alcoholamount: req.body.
             alcoholamount,
-        container: req.body.log.
+        container: req.body.
             container,
-        startdate: req.body.log.
+        startdate: req.body.
             startdate,
-        enddate: req.body.log.
+        enddate: req.body.
             enddate,
-        overallresult: req.body.log.
+        overallresult: req.body.
             overallresult
     };
 
-    const query = { where: { id: req.params.id, owner_id: req.user.id } };
+    const query = { where: { id: req.params.id, userId: req.user.id } };
 
-    Extract.update(updateExtractEntry, query)
+    Extract.update(updateExtract, query)
         .then((extracts) => res.status(200).json(extracts))
         .catch((err) => res.status(500).json({ error: err }));
 });
 
 // DELETE EXTRACT BY ID
-router.delete("/:id", validateSession,
+router.delete("/delete/:id", validateSession,
     (req, res) => {
-        const query = { where: { id: req.user.id } };
+        const query = { where: { id: req.params.id, userId: req.user.id } };
         Extract.destroy(query)
             .then(() => res.status(200).json({ message: "Extract Entry Deleted" }))
             .catch((err) => res.status(500).json({ error: err }))

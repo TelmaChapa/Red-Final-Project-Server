@@ -1,19 +1,22 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { Router } = require("express");
-const { User, Extract } = require("../models");
+const { Image } = require("../models");
 const validateSession = require("../middleware/validate-session");
-const { update } = require("../models/user");
+
 
 const router = Router();
-
+//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwiaWF0IjoxNjM1Mjk1NjYxLCJleHAiOjE2MzUzODIwNjF9.V3bNO7faz0unEKolWMzOyu8YGPTpqnvbsJkazcJksMQ
 //POST IMAGE
 router.post("/", validateSession, (req, res) => {
     const { imageupload, description } = req.body;
+    const owner = req.user.id
 
     Image.create({
         imageupload,
         description,
+        userId: owner
+
     })
         .then(image => res.status(200).json(image))
         .catch(err => res.status(500).json({ error: err }))
@@ -23,7 +26,7 @@ router.post("/", validateSession, (req, res) => {
 router.get('/all', validateSession, (req, res) => {
     let userid = req.user.id
     Image.findAll({
-        where: { user_id: userid }
+        where: { userId: userid }
     })
         .then(images => res.status(200).json(images))
         .catch(err => res.status(500).json({ error: err }))
@@ -38,25 +41,25 @@ router.get('/all', validateSession, (req, res) => {
 });
 
 //UPDATE IMAGE BY ID
-router.update("/:id", validateSession, (req, res) {
-    const udateImage = {
-        imageupload: req.body.log.
+router.put("/update/:id", validateSession, (req, res) => {
+    const updateImage = {
+        imageupload: req.body.
             imageupload,
-        description: req.body.log.
+        description: req.body.
             description
     };
 
-    const query = { where: { id: req.params.id, owner_id: req.user.id } };
+    const query = { where: { id: req.params.id, userId: req.user.id } };
 
-    Image.update(updateImageEntry, query)
+    Image.update(updateImage, query)
         .then((images) => res.status(200).json(images))
         .catch((err) => res.status(500).json({ error: err }));
 });
 
 
 //DELETE IMAGE BY ID
-router.delete("/:id", validateSession, (req, res) => {
-    const query = { where: { id: req.user.id } };
+router.delete("/delete/:id", validateSession, (req, res) => {
+    const query = { where: { id: req.params.id, userId: req.user.id } };
     Image.destroy(query)
         .then(() => res.status(200).json({ message: "Image Entry Deleted" }))
         .catch((err) => res.status(500).json({ error: err }))
