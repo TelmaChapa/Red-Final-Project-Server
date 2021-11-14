@@ -8,7 +8,7 @@ const validateSession = require("../middleware/validate-session");
 const router = Router();
 //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwiaWF0IjoxNjM1Mjk1NjYxLCJleHAiOjE2MzUzODIwNjF9.V3bNO7faz0unEKolWMzOyu8YGPTpqnvbsJkazcJksMQ
 //POST IMAGE
-router.post("/", validateSession, (req, res) => {
+router.post("/create", validateSession, (req, res) => {
     const { imageupload, description } = req.body;
     const owner = req.user.id
 
@@ -23,7 +23,7 @@ router.post("/", validateSession, (req, res) => {
 });
 
 //GET IMAGE
-router.get('/all', validateSession, (req, res) => {
+router.get('/mine', validateSession, (req, res) => {
     let userid = req.user.id
     Image.findAll({
         where: { userId: userid }
@@ -33,7 +33,7 @@ router.get('/all', validateSession, (req, res) => {
 });
 
 //GET ALL IMAGES
-router.get('/all', validateSession, (req, res) => {
+router.get('/all', (req, res) => {
     Image.findAll({
     })
         .then(images => res.status(200).json(images))
@@ -59,7 +59,13 @@ router.put("/update/:id", validateSession, (req, res) => {
 
 //DELETE IMAGE BY ID
 router.delete("/delete/:id", validateSession, (req, res) => {
-    const query = { where: { id: req.params.id, userId: req.user.id } };
+    let query;
+    if (req.user.role == "admin") {
+        query = { where: { id: req.params.id } };
+    } else {
+        query = { where: { id: req.params.id, userId: req.user.id } };
+    }
+
     Image.destroy(query)
         .then(() => res.status(200).json({ message: "Image Entry Deleted" }))
         .catch((err) => res.status(500).json({ error: err }))

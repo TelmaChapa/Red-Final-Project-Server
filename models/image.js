@@ -7,8 +7,6 @@ const Image = db.define(
 
         imageupload: {
             type: DataTypes.STRING(3500),
-            allowNull: false,
-            unique: true,
         },
         description: {
             type: DataTypes.STRING(500),

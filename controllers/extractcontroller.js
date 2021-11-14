@@ -7,7 +7,7 @@ const validateSession = require("../middleware/validate-session");
 const router = Router();
 
 // POST CREATE EXTRACT
-router.post("/", validateSession, (req, res) => {
+router.post("/create", validateSession, (req, res) => {
     const { beantype, beanamount, alcoholtype, proof, alcoholamount, container, startdate, enddate, overallresult } = req.body;
 
     Extract.create({
